@@ -112,7 +112,7 @@ app.get('/all', async (req, res, next) => {
         if(Array.isArray(serieInfo.latestsURLs) && serieInfo.latestsURLs.length){
             res.write(`<h2>${serieInfo.tittle}</h2>`);
             serieInfo.latestsURLs.map(url => {
-                res.write(`<a href="${url}">${url}</a>`);
+                res.write(`<p><a href="${url}">${url}</a></p>`);
             });
         }
     });
@@ -130,7 +130,7 @@ app.get('/esp', async (req, res, next) => {
             res.write(`<h2>${serieInfo.tittle}</h2>`);
             if(Array.isArray(serieInfo.latestsURLs) && serieInfo.latestsURLs.length){
                 serieInfo.latestsURLs.map(url => {
-                    res.write(`<a href="${url}">${url}</a>`);
+                    res.write(`<p><a href="${url}">${url}</a></p>`);
                 });
             }
             else{

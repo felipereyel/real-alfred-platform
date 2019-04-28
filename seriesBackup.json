@@ -20,7 +20,11 @@
     "URL": "https://psarips.org/tv-show/cloak-dagger/",
     "notDownloaded": [
       "S02E05",
-      "S02E06"
+      "S02E06",
+      "S02E07",
+      "S02E08",
+      "S02E09",
+      "S02E10"
     ],
     "quality": "720p",
     "source": "WEB"
@@ -49,7 +53,8 @@
       "S02E06",
       "S02E07",
       "S02E08",
-      "S02E09"
+      "S02E09",
+      "S02E10"
     ],
     "quality": "720p",
     "source": "WEB"
@@ -62,7 +67,9 @@
     "notDownloaded": [
       "S01E11",
       "S01E12",
-      "S01E13"
+      "S01E13",
+      "S01E14",
+      "S01E15"
     ],
     "quality": "720p",
     "source": "WEB"
@@ -76,7 +83,7 @@
       "S02E07",
       "S02E08"
     ],
-    "quality": "720p",
+    "quality": "1080p",
     "source": "WEB"
   },
   {
@@ -86,7 +93,10 @@
     "URL": "https://psarips.org/tv-show/game-thrones-season-7/",
     "notDownloaded": [
       "S08E02",
-      "S08E03"
+      "S08E03",
+      "S08E04",
+      "S08E05",
+      "S08E06"
     ],
     "quality": "1080p",
     "source": "WEB"
