@@ -1,22 +1,12 @@
 const axios = require('axios');
 const fs = require('fs');
+const express        =        require("express");
+const app            =        express();
+const PORT = process.env.PORT || 3000;
 
-function copy(aObject) {
-    if (!aObject) {
-      return aObject;
-    }
-  
-    let v;
-    let bObject = Array.isArray(aObject) ? [] : {};
-    for (const k in aObject) {
-      v = aObject[k];
-      bObject[k] = (typeof v === "object") ? copy(v) : v;
-    }
-  
-    return bObject;
-};
+app.use(express.static('public'));
 
-async function filterQualitySource(names, quality, source){//ta TOPZERA
+function filterQualitySource(names, quality, source){//ta TOPZERA
     //filtro de Qualidade
     let namesFilteredByQuality = names.filter((name) => {
         if(name.search(quality) != -1){
@@ -43,13 +33,13 @@ async function filterQualitySource(names, quality, source){//ta TOPZERA
     return namesFilteredByQualityBySource[0];
 };
 
-async function createURL(fileName){//ta PIka daS GalaxiA
+function createURL(fileName){//ta PIka daS GalaxiA
     let URL = 'https://linx.cloud/' + fileName.replace('.HEVC-PSA', '').replace('.','-').toLowerCase();
     return URL;
 };
 
-async function getEpNamesFromURL(name, URL){//melhor que essa so duas essa
-    return await axios.get(URL).then(response => {
+function getEpNamesFromURL(name, URL){//melhor que essa so duas essa
+    return axios.get(URL).then(response => {
         let ss = response.data.split('\n');
         let names = ss.filter((line) => {
             if(line.slice(0, name.length) == name){
@@ -62,15 +52,16 @@ async function getEpNamesFromURL(name, URL){//melhor que essa so duas essa
     });
 };
 
-async function getJSONDataBase(fileName){//double triple piroca
+async function getJSONDataBase(fileName = 'series.json'){//double triple piroca
     return JSON.parse(fs.readFileSync(fileName));
 };
 
-async function pushJSONDataBase(fileName, jsonfile){//nao testada
+async function pushJSONDataBase(jsonfile, fileName){//nao testada
     fs.writeFileSync(fileName, JSON.stringify(jsonfile, null, 2));
+    return jsonfile;
 };
 
-async function filterNamesToDownload(names, notDowloaded){//le TOPERson
+function filterNamesToDownload(names, notDowloaded){//le TOPERson
     let namesToDownload = {};
 
     notDowloaded.map((epNotDownloaded) => {
@@ -84,50 +75,92 @@ async function filterNamesToDownload(names, notDowloaded){//le TOPERson
     return namesToDownload;
 };
 
-async function findEps(serieInfo){
+function promiseRefreshSeriesInfo(seriesInfo){
+    return seriesInfo.map(serieInfo => {
+        let {codename, tittle, name, URL, notDownloaded, quality, source} = serieInfo;
 
-    let serieInfoCopy = copy(serieInfo);
-    let URLs = [];
+        return getEpNamesFromURL(name, URL).then(availableEpisodeNames => {
+            availableEpisodeNamesToDownload =  filterNamesToDownload(availableEpisodeNames, notDownloaded);
+            let latestsURLs = [];
+            for(var ep in availableEpisodeNamesToDownload){
+                if(!(Array.isArray(availableEpisodeNamesToDownload[ep]) && availableEpisodeNamesToDownload[ep].length)){
+                    continue; //se nao tem link do episodio
+                }
+                notDownloaded = notDownloaded.filter((epNotDownloaded) => {return epNotDownloaded != ep;});
+                latestsURLs.push(createURL(filterQualitySource(availableEpisodeNamesToDownload[ep], quality, source)));
+            }
 
-    let names = await getEpNamesFromURL(serieInfoCopy.name, serieInfoCopy.URL);
-    let namesToDownload = await filterNamesToDownload(names, serieInfoCopy.notDownloaded);
-
-    for(var ep in namesToDownload){
-        if(!(Array.isArray(namesToDownload[ep]) && namesToDownload[ep].length)){
-            continue;
-        }
-        let nameToDownloadFiltered = await filterQualitySource(namesToDownload[ep], serieInfoCopy.quality, serieInfoCopy.source);
-        serieInfoCopy.notDownloaded = serieInfoCopy.notDownloaded.filter((epNotDownloaded) => {
-            return epNotDownloaded != ep;
+            return {codename, tittle, name, URL, notDownloaded, quality, source, latestsURLs};
         });
-        URLs.push(await createURL(nameToDownloadFiltered));
-    }
-
-    return {serieInfoCopy, URLs};    
+    }); 
 };
 
-async function run(serieCode = 'all'){
-    let seriesInfo = await getJSONDataBase('series.json');
-    let allURLs = [];
+async function refreshSeriesInfo(fileName = 'series.json'){
+    let seriesInfo = await getJSONDataBase(fileName);
+    return pushJSONDataBase(await Promise.all(promiseRefreshSeriesInfo(seriesInfo)), fileName);
+};
 
-    if(serieCode == 'all'){
-        for (let serie in seriesInfo){
-            const {serieInfoCopy, URLs} = await findEps(seriesInfo[serie]);
-            seriesInfo[serie] = serieInfoCopy;
-            //console.log(URLs);
-            allURLs.push({tittle: seriesInfo[serie].tittle, URLs});
+async function run(){
+    yes = await refreshSeriesInfo();
+    console.log(yes);
+};
+
+app.get('/all', async (req, res, next) => {
+    let seriesInfo = await refreshSeriesInfo();
+    res.write(`<!DOCTYPE html><html><head><title>Download Helper</title></head><body><h1>Episodios disponiveis</h1>`);
+    seriesInfo.map(serieInfo => {
+        if(Array.isArray(serieInfo.latestsURLs) && serieInfo.latestsURLs.length){
+            res.write(`<h2>${serieInfo.tittle}</h2>`);
+            serieInfo.latestsURLs.map(url => {
+                res.write(`<a href="${url}">${url}</a>`);
+            });
         }
-    }
-    else{
-        const {serieInfoCopy, URLs} = await findEps(seriesInfo[serieCode]);
-        seriesInfo[serieCode] = serieInfoCopy;
-        //console.log(URLs);
-        allURLs.push({tittle: seriesInfo[serieCode].tittle, URLs});
-    }
+    });
+    res.write('</body></html>');
+    res.end();
+    console.log('GET/all');
+});
 
-    await pushJSONDataBase('series.json', seriesInfo);
-    console.log(JSON.stringify(allURLs, null, 2));
-    return allURLs;
-}; 
+app.get('/esp', async (req, res, next) => {
+    const seriesInfo = await refreshSeriesInfo();
+    const codename = req.query.s;
+    res.write(`<!DOCTYPE html><html><head><title>Download Helper</title></head><body><h1>Episodios disponiveis</h1>`);
+    seriesInfo.map(serieInfo => {
+        if(serieInfo.codename == codename){
+            res.write(`<h2>${serieInfo.tittle}</h2>`);
+            if(Array.isArray(serieInfo.latestsURLs) && serieInfo.latestsURLs.length){
+                serieInfo.latestsURLs.map(url => {
+                    res.write(`<a href="${url}">${url}</a>`);
+                });
+            }
+            else{
+                res.write(`<p>Nao ha episodios diponiveis</p>`);
+            }
+        }
+    });
+    res.write('</body></html>');
+    res.end();
+    console.log(`GET/esp for ${codename}`);
+});
 
-run('cloak');
+app.get('/json', async (req, res, next) => {
+    const seriesInfo = await getJSONDataBase();
+    res.json(seriesInfo);
+    console.log(`GET/json`);
+});
+
+app.get('/', async (req, res, next) => {
+    res.write(`<!DOCTYPE html><html><head><title>Helper</title></head><body><h1>SO VAZA</h1><p>Propriedade privada.</p></body></html>`);
+    res.end();
+    console.log('GET/');
+});
+
+app.get('/reyel', async (req, res, next) => {
+    res.write('<a href="tor.reyel.dev">series helper</a>');
+    res.end();
+    console.log('GET/reyel');
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
+});
