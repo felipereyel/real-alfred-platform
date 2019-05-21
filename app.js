@@ -2,7 +2,9 @@ const axios = require('axios');
 const fs = require('fs');
 const express        =        require("express");
 const app            =        express();
+
 const PORT = process.env.PORT || 3000;
+const dbURL = 'https://jsonblob.com/api/jsonBlob/1ec7dfb0-7bd0-11e9-b226-638df6227e29';
 
 app.use(express.static('public'));
 
@@ -52,11 +54,11 @@ function getEpNamesFromURL(name, URL){//melhor que essa so duas essa
     });
 };
 
-async function getJSONDataBase(fileName = 'series.json'){//double triple piroca
+async function getJSONDataBase(fileName = 'series.json', url = dbURL){//double triple piroca
     return JSON.parse(fs.readFileSync(fileName));
 };
 
-async function pushJSONDataBase(jsonfile, fileName){//nao testada
+async function pushJSONDataBase(jsonfile, fileName, url = dbURL){//nao testada
     fs.writeFileSync(fileName, JSON.stringify(jsonfile, null, 2));
     return jsonfile;
 };
@@ -75,7 +77,7 @@ function filterNamesToDownload(names, notDowloaded){//le TOPERson
     return namesToDownload;
 };
 
-function promiseRefreshSeriesInfo(seriesInfo){
+function promiseRefreshSeriesInfo(seriesInfo){//master of pirocas
     return seriesInfo.map(serieInfo => {
         let {codename, tittle, name, URL, notDownloaded, quality, source} = serieInfo;
 
@@ -95,7 +97,7 @@ function promiseRefreshSeriesInfo(seriesInfo){
     }); 
 };
 
-async function refreshSeriesInfo(fileName = 'series.json'){
+async function refreshSeriesInfo(fileName = 'series.json'){//pirocoptero
     let seriesInfo = await getJSONDataBase(fileName);
     return pushJSONDataBase(await Promise.all(promiseRefreshSeriesInfo(seriesInfo)), fileName);
 };
