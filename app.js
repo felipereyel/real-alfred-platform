@@ -4,7 +4,10 @@ const express        =        require("express");
 const app            =        express();
 
 const PORT = process.env.PORT || 3000;
-const dbURL = 'https://jsonblob.com/api/jsonBlob/1ec7dfb0-7bd0-11e9-b226-638df6227e29';
+
+const dbURL = 'https://api.jsonbin.io/b/5ce43b79838e9b0c10bcd344';
+const dbsecretKey = '$2a$10$x6s7qqp.6PqaM5uyQoyIRu23f3awCM5freqJFM7Pfqdn3s5FgX7sa';
+const secret = 'tchakavrau';
 
 app.use(express.static('public'));
 
@@ -54,13 +57,31 @@ function getEpNamesFromURL(name, URL){//melhor que essa so duas essa
     });
 };
 
-async function getJSONDataBase(fileName = 'series.json', url = dbURL){//double triple piroca
-    return JSON.parse(fs.readFileSync(fileName));
+async function getJSONDataBase(url = dbURL, secretKey = dbsecretKey){//double triple piroca
+    return axios({
+        method: 'get',
+        url: url+'/latest',
+        headers: {
+            'secret-key': secretKey
+        }
+    }).then(res => {
+        return res.data;
+    });
 };
 
-async function pushJSONDataBase(jsonfile, fileName, url = dbURL){//nao testada
-    fs.writeFileSync(fileName, JSON.stringify(jsonfile, null, 2));
-    return jsonfile;
+async function putJSONDataBase(jsonfile, url = dbURL, secretKey = dbsecretKey){//nao testada - zuera foi sim
+    return axios({
+        method: 'put',
+        url: url,
+        headers: {
+            'Content-type': 'application/json',
+            'versioning': false,
+            'secret-key': secretKey
+        },
+        data: jsonfile
+    }).then(res => {
+        return res.data;
+    });
 };
 
 function filterNamesToDownload(names, notDowloaded){//le TOPERson
@@ -79,11 +100,10 @@ function filterNamesToDownload(names, notDowloaded){//le TOPERson
 
 function promiseRefreshSeriesInfo(seriesInfo){//master of pirocas
     return seriesInfo.map(serieInfo => {
-        let {codename, tittle, name, URL, notDownloaded, quality, source} = serieInfo;
+        let {codename, tittle, name, URL, notDownloaded, quality, source, latestsURLs} = serieInfo;
 
         return getEpNamesFromURL(name, URL).then(availableEpisodeNames => {
             availableEpisodeNamesToDownload =  filterNamesToDownload(availableEpisodeNames, notDownloaded);
-            let latestsURLs = [];
             for(var ep in availableEpisodeNamesToDownload){
                 if(!(Array.isArray(availableEpisodeNamesToDownload[ep]) && availableEpisodeNamesToDownload[ep].length)){
                     continue; //se nao tem link do episodio
@@ -97,9 +117,13 @@ function promiseRefreshSeriesInfo(seriesInfo){//master of pirocas
     }); 
 };
 
-async function refreshSeriesInfo(fileName = 'series.json'){//pirocoptero
-    let seriesInfo = await getJSONDataBase(fileName);
-    return pushJSONDataBase(await Promise.all(promiseRefreshSeriesInfo(seriesInfo)), fileName);
+async function refreshSeriesInfo(){//pirocoptero
+    return getJSONDataBase().then(seriesInfo => {
+        return Promise.all(promiseRefreshSeriesInfo(seriesInfo));
+    }).then(async newSeriesInfo => {
+        await putJSONDataBase(newSeriesInfo);
+        return newSeriesInfo
+    });
 };
 
 async function run(){
