@@ -1,7 +1,7 @@
 {
   "name": "tor",
   "version": "1.0.0",
-  "description": "",
+  "description": "Esse projeto cria uma ferramenta que auxilia na busca de suas series favoritas",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,6 +11,14 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
-    "express": "^4.16.4"
-  }
+    "express": "^4.17.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/felipereyel/tor_aux.git"
+  },
+  "bugs": {
+    "url": "https://gitlab.com/felipereyel/tor_aux/issues"
+  },
+  "homepage": "https://gitlab.com/felipereyel/tor_aux#readme"
 }
