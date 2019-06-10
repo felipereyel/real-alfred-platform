@@ -50,7 +50,7 @@ function getEpNamesFromURL(name, URL){//melhor que essa so duas essa
             if(line.slice(0, name.length) == name){
                 return true;
             }
-        })
+        }).map((line) => line.split('.HEVC-PSA')[0])
         return names;
     }).catch(error => {
         console.log(errror);
