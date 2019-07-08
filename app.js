@@ -100,7 +100,9 @@ function filterNamesToDownload(names, notDowloaded){//le TOPERson
 
 function promiseRefreshSeriesInfo(seriesInfo){//master of pirocas
     return seriesInfo.map(serieInfo => {
-        let {codename, tittle, name, URL, notDownloaded, quality, source, latestsURLs} = serieInfo;
+        let {codename, tittle, name, URL, notDownloaded, quality, source, latestsURLs, newURLs} = serieInfo;
+
+        newURLs = [];
 
         return getEpNamesFromURL(name, URL).then(availableEpisodeNames => {
             availableEpisodeNamesToDownload =  filterNamesToDownload(availableEpisodeNames, notDownloaded);
@@ -110,9 +112,10 @@ function promiseRefreshSeriesInfo(seriesInfo){//master of pirocas
                 }
                 notDownloaded = notDownloaded.filter((epNotDownloaded) => {return epNotDownloaded != ep;});
                 latestsURLs.push(createURL(filterQualitySource(availableEpisodeNamesToDownload[ep], quality, source)));
+                newURLs.push(createURL(filterQualitySource(availableEpisodeNamesToDownload[ep], quality, source)));
             }
 
-            return {codename, tittle, name, URL, notDownloaded, quality, source, latestsURLs};
+            return {codename, tittle, name, URL, notDownloaded, quality, source, latestsURLs, newURLs};
         });
     }); 
 };
@@ -147,6 +150,22 @@ app.get('/all', async (req, res, next) => {
     console.log('GET/all');
 });
 
+app.get('/new', async (req, res, next) => {
+    let seriesInfo = await refreshSeriesInfo();
+    res.write(`<!DOCTYPE html><html><head><title>Download Helper</title></head><body><h1>Episodios disponiveis</h1>`);
+    seriesInfo.map(serieInfo => {
+        if(Array.isArray(serieInfo.newURLs) && serieInfo.newURLs.length){
+            res.write(`<h2>${serieInfo.tittle}</h2>`);
+            serieInfo.newURLs.map(url => {
+                res.write(`<p><a href="${url}">${url}</a></p>`);
+            });
+        }
+    });
+    res.write('</body></html>');
+    res.end();
+    console.log('GET/all');
+});
+
 app.get('/esp', async (req, res, next) => {
     const seriesInfo = await refreshSeriesInfo();
     const codename = req.query.s;
@@ -169,10 +188,10 @@ app.get('/esp', async (req, res, next) => {
     console.log(`GET/esp for ${codename}`);
 });
 
-app.get('/json', async (req, res, next) => {
+app.get('/db', async (req, res, next) => {
     const seriesInfo = await getJSONDataBase();
     res.json(seriesInfo);
-    console.log(`GET/json`);
+    console.log(`GET/db`);
 });
 
 app.get('/', async (req, res, next) => {
