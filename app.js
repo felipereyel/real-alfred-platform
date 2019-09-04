@@ -39,7 +39,7 @@ function filterQualitySource(names, quality, source){//ta TOPZERA
 };
 
 function createURL(fileName){//ta PIka daS GalaxiA
-    let URL = 'https://linx.cloud/' + fileName.replace('.HEVC-PSA', '').replace('.','-').toLowerCase();
+    let URL = 'https://get-to.link/' + fileName.replace('.HEVC-PSA', '').replace('.','-').toLowerCase();
     return URL;
 };
 
