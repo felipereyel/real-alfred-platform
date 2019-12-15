@@ -184,19 +184,27 @@ router.get('/', async (req, res, next) => {
                         Robot for Easy Downloads
                     </p>
                     <h2>
+                        New episodes
+                    </h2>
+                    <p>
+                        <a href="/refresh">
+                            /refresh
+                        </a>
+                    </p>
+                    <h2>
+                        Recent episodes
+                    </h2>
+                    <p>
+                        <a href="/recent">
+                            /recent
+                        </a>
+                    </p>
+                    <h2>
                         All episodes
                     </h2>
                     <p>
                         <a href="/all">
                             /all
-                        </a>
-                    </p>
-                    <h2>
-                        New episodes
-                    </h2>
-                    <p>
-                        <a href="/new">
-                            /new
                         </a>
                     </p>
                     <h2>
