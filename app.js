@@ -1,5 +1,4 @@
 const axios = require('axios');
-const fs = require('fs');
 const express        =        require("express");
 const app            =        express();
 
@@ -10,6 +9,7 @@ const dbsecretKey = '$2a$10$x6s7qqp.6PqaM5uyQoyIRu23f3awCM5freqJFM7Pfqdn3s5FgX7s
 const secret = 'tchakavrau';
 
 app.use(express.static('public'));
+app.use(express.urlencoded());
 
 function filterQualitySource(names, quality, source){//ta TOPZERA
     //filtro de Qualidade
@@ -136,56 +136,203 @@ async function run(){
 
 app.get('/all', async (req, res, next) => {
     let seriesInfo = await refreshSeriesInfo();
-    res.write(`<!DOCTYPE html><html><head><title>Download Helper</title></head><body><h1>Episodios disponiveis</h1>`);
+    res.write(`
+        <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>
+                        Download Helper
+                    </title>
+                </head>
+                <body>
+                    <h1>
+                        Episodios disponiveis
+                    </h1>
+    `);
     seriesInfo.map(serieInfo => {
         if(Array.isArray(serieInfo.latestsURLs) && serieInfo.latestsURLs.length){
-            res.write(`<h2>${serieInfo.tittle}</h2>`);
+            res.write(`
+                    <h2>
+                        ${serieInfo.tittle}
+                    </h2>
+            `);
             serieInfo.latestsURLs.map(url => {
-                res.write(`<p><a href="${url}">${url}</a></p>`);
+                res.write(`
+                    <p><a href="${url}">
+                        ${url}
+                    </a></p>
+                `);
             });
         }
     });
-    res.write('</body></html>');
+    res.write(`
+                </body>
+            </html>
+    `);
     res.end();
     console.log('GET/all');
 });
 
 app.get('/new', async (req, res, next) => {
     let seriesInfo = await refreshSeriesInfo();
-    res.write(`<!DOCTYPE html><html><head><title>Download Helper</title></head><body><h1>Episodios disponiveis</h1>`);
+    res.write(`
+        <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>
+                        Download Helper
+                    </title>
+                </head>
+                <body>
+                    <h1>
+                        Episodios disponiveis
+                    </h1>
+    `);
     seriesInfo.map(serieInfo => {
         if(Array.isArray(serieInfo.newURLs) && serieInfo.newURLs.length){
-            res.write(`<h2>${serieInfo.tittle}</h2>`);
+            res.write(`
+                    <h2>
+                        ${serieInfo.tittle}
+                    </h2>
+            `);
             serieInfo.newURLs.map(url => {
-                res.write(`<p><a href="${url}">${url}</a></p>`);
+                res.write(`
+                    <p><a href="${url}">
+                        ${url}
+                    </a></p>
+                `);
             });
         }
     });
-    res.write('</body></html>');
+    res.write(`
+                </body>
+            </html>
+    `);
     res.end();
     console.log('GET/all');
+});
+
+app.get('/listform', async (req, res, next) => {
+    const seriesInfo = await getJSONDataBase();
+    res.write(`
+        <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>
+                        Download Helper
+                    </title>
+                </head>
+                <body>
+                    <h1>
+                        Series cadastradas
+                    </h1>
+    `);
+
+    seriesInfo.map(serieInfo => {
+        res.write(`
+                    <p>
+                        ${serieInfo.tittle} - <a href="/esp?s=${serieInfo.codename}">${serieInfo.codename}</a>
+                    </p>
+        `);
+    });
+
+    res.write(`
+                </body>
+            </html>
+    `);
+
+    res.end();
+
+    console.log(`GET/listform`);
 });
 
 app.get('/esp', async (req, res, next) => {
     const seriesInfo = await refreshSeriesInfo();
     const codename = req.query.s;
-    res.write(`<!DOCTYPE html><html><head><title>Download Helper</title></head><body><h1>Episodios disponiveis</h1>`);
+    res.write(`
+        <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>
+                        Download Helper
+                    </title>
+                </head>
+                <body>
+                    <h1>
+                        Episodios disponiveis
+                    </h1>
+    `);
     seriesInfo.map(serieInfo => {
         if(serieInfo.codename == codename){
-            res.write(`<h2>${serieInfo.tittle}</h2>`);
+            res.write(`
+                    <h2>
+                        ${serieInfo.tittle}
+                    </h2>
+            `);
             if(Array.isArray(serieInfo.latestsURLs) && serieInfo.latestsURLs.length){
                 serieInfo.latestsURLs.map(url => {
-                    res.write(`<p><a href="${url}">${url}</a></p>`);
+                    res.write(`
+                    <p><a href="${url}">
+                        ${url}
+                    </a></p>
+                    `);
                 });
             }
             else{
-                res.write(`<p>Nao ha episodios diponiveis</p>`);
+                res.write(`
+                    <p>
+                        Nao ha episodios diponiveis
+                    </p>
+                `);
             }
         }
     });
     res.write('</body></html>');
     res.end();
     console.log(`GET/esp for ${codename}`);
+});
+
+app.get('/linkform', async (req, res, next) => {
+    res.write(`
+        <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>
+                        Link Helper
+                    </title>
+                </head>
+                <body>
+                    <form method="POST" action="/linkresult">
+                        <input type="text" name="filename" />
+                        <input type="submit" />
+                    </form>
+                </body>
+            </html>
+    `);
+    res.end();
+    console.log(`GET/linkform`);
+});
+
+app.post('/linkresult', async (req, res, next) => {
+    const filename = req.body.filename;
+    const filelink = createURL(filename);
+
+    res.write(`
+    <!DOCTYPE html>
+        <html>
+            <head>
+                <title>
+                    Link Helper
+                </title>
+            </head>
+            <body>
+                <p>${filename}</p>
+                <p><a href="${filelink}">${filelink}</a></p>
+            </body>
+        </html>
+    `);
+    res.end();
+    console.log(`POST/result for ${filename}`)
 });
 
 app.get('/db', async (req, res, next) => {
@@ -195,15 +342,26 @@ app.get('/db', async (req, res, next) => {
 });
 
 app.get('/', async (req, res, next) => {
-    res.write(`<!DOCTYPE html><html><head><title>Helper</title></head><body><h1>SO VAZA</h1><p>Propriedade privada.</p></body></html>`);
+    res.write(`
+        <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>
+                        Helper
+                    </title>
+                </head>
+                <body>
+                    <h1>
+                        SO VAZA
+                    </h1>
+                    <p>
+                        Propriedade privada.
+                    </p>
+                </body>
+            </html>
+    `);
     res.end();
     console.log('GET/');
-});
-
-app.get('/reyel', async (req, res, next) => {
-    res.write('<a href="tor.reyel.dev">series helper</a>');
-    res.end();
-    console.log('GET/reyel');
 });
 
 app.listen(PORT, () => {
