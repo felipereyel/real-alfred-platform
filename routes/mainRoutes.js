@@ -1,4 +1,4 @@
-const { refreshSeriesInfo } = require("../processFunctions");
+const { refreshSeriesInfo, getJSONDataBase } = require("../processFunctions");
 
 const express = require("express");
 const router = express.Router();
@@ -42,7 +42,7 @@ router.get('/all', async (req, res, next) => {
     console.log('GET/all');
 });
 
-router.get('/new', async (req, res, next) => {
+router.get('/refresh', async (req, res, next) => {
     let seriesInfo = await refreshSeriesInfo();
     res.write(`
         <!DOCTYPE html>
@@ -78,7 +78,46 @@ router.get('/new', async (req, res, next) => {
             </html>
     `);
     res.end();
-    console.log('GET/all');
+    console.log('GET/refresh');
+});
+
+router.get('/recent', async (req, res, next) => {
+    let seriesInfo = await getJSONDataBase();
+    res.write(`
+        <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>
+                        A.L.F.R.E.D.
+                    </title>
+                </head>
+                <body>
+                    <h1>
+                        Episodios disponiveis
+                    </h1>
+    `);
+    seriesInfo.map(serieInfo => {
+        if(Array.isArray(serieInfo.newURLs) && serieInfo.newURLs.length){
+            res.write(`
+                    <h2>
+                        ${serieInfo.tittle}
+                    </h2>
+            `);
+            serieInfo.newURLs.map(url => {
+                res.write(`
+                    <p><a href="${url}">
+                        ${url}
+                    </a></p>
+                `);
+            });
+        }
+    });
+    res.write(`
+                </body>
+            </html>
+    `);
+    res.end();
+    console.log('GET/recent');
 });
 
 router.get('/esp', async (req, res, next) => {

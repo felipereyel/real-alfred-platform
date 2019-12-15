@@ -113,6 +113,48 @@ async function refreshSeriesInfo() {
     });
 };
 
+function buildAndAppendSerieInfo(seriesInfo, pseudoSerieInfo) {
+    const { season, numEps, ...otherInfo } = pseudoSerieInfo;
+    const notDownloaded = [];
+
+    for (ep = 1; ep <= Number(numEps); ep++){
+        if (ep >= 10) {
+            notDownloaded.push(season + "E" + ep.toString());
+        }
+        else {
+            notDownloaded.push(season + "E0" + ep.toString());
+        }
+    }
+
+    const serieInfo = { ...otherInfo, notDownloaded, latestsURLs: [], newURLs:[] };
+
+    seriesInfo.push(serieInfo);
+
+    return seriesInfo;
+}
+
+function addSerieInfo(pseudoSerieInfo) {
+    
+    return getJSONDataBase().then(seriesInfo => {
+        return buildAndAppendSerieInfo(seriesInfo, pseudoSerieInfo);
+    }).then(async (newSeriesInfo) => {
+        await putJSONDataBase(newSeriesInfo);
+        return newSeriesInfo;
+    });
+};
+
+function removeSerieInfo(codename) {
+    
+    return getJSONDataBase().then(seriesInfo => {
+        return seriesInfo.filter(serieInfo => (serieInfo.codename != codename));
+    }).then(async (newSeriesInfo) => {
+        await putJSONDataBase(newSeriesInfo);
+        return newSeriesInfo;
+    });
+};
+
 exports.createURL = createURL;
 exports.getJSONDataBase = getJSONDataBase;
 exports.refreshSeriesInfo = refreshSeriesInfo;
+exports.addSerieInfo = addSerieInfo;
+exports.removeSerieInfo = removeSerieInfo;
