@@ -13,10 +13,16 @@ router.get('/link', async (req, res, next) => {
                     </title>
                 </head>
                 <body>
+                    <h1>
+                        Converter nome do arquivo em link
+                    </h1>
                     <form method="POST" action="/linkresult">
-                        <input type="text" name="filename" />
+                        Filename: <input type="text" name="filename" />
                         <input type="submit" />
                     </form>
+                    <p>
+                        (Ex: Banana.HDTV.2CH.x265.HEVC-PSA)
+                    </p>
                 </body>
             </html>
     `);
@@ -37,8 +43,18 @@ router.post('/linkresult', async (req, res, next) => {
                 </title>
             </head>
             <body>
-                <p>${filename}</p>
-                <p><a href="${filelink}">${filelink}</a></p>
+                <h2>
+                    Link do arquivo
+                </h2>
+                <p>
+                    Arquivo: ${filename}
+                </p>
+                <p>
+                    Link: 
+                    <a href="${filelink}">
+                        ${filelink}
+                    </a>
+                </p>
             </body>
         </html>
     `);
