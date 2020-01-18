@@ -8,6 +8,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(require('./routes/mainRoutes'));
 app.use(require('./routes/linkRoutes'));
 app.use(require('./routes/managementRoutes'));
+app.use('/dev', require('./dev/mainRoutes'));
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
