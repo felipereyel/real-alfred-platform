@@ -1,4 +1,5 @@
-const { dbURL, dbsecretKey, urlPrefix, tagToRemove } = require("./constants");
+const { urlPrefix, tagToRemove } = require("./constants");
+const { putJSONDataBase, getJSONDataBase } = require("./databaseFunctions")
 
 const axios = require('axios');
 
@@ -42,34 +43,7 @@ function getEpNamesFromURL(name, URL) {
         }).map((line) => line.split(tagToRemove)[0]);
         return names;
     }).catch(error => {
-        console.log(errror);
-    });
-};
-
-async function getJSONDataBase(url = dbURL, secretKey = dbsecretKey) {
-    return axios({
-        method: 'get',
-        url: url + '/latest',
-        headers: {
-            'secret-key': secretKey
-        }
-    }).then(res => {
-        return res.data;
-    });
-};
-
-async function putJSONDataBase(jsonfile, url = dbURL, secretKey = dbsecretKey) {
-    return axios({
-        method: 'put',
-        url: url,
-        headers: {
-            'Content-type': 'application/json',
-            'versioning': false,
-            'secret-key': secretKey
-        },
-        data: jsonfile
-    }).then(res => {
-        return res.data;
+        console.log(error);
     });
 };
 
@@ -154,7 +128,6 @@ function removeSerieInfo(codename) {
 };
 
 exports.createURL = createURL;
-exports.getJSONDataBase = getJSONDataBase;
 exports.refreshSeriesInfo = refreshSeriesInfo;
 exports.addSerieInfo = addSerieInfo;
 exports.removeSerieInfo = removeSerieInfo;

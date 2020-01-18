@@ -1,4 +1,5 @@
-const { refreshSeriesInfo, getJSONDataBase } = require("../processFunctions");
+const { refreshSeriesInfo } = require("../processFunctions");
+const { getJSONDataBase } = require("../databaseFunctions");
 
 const express = require("express");
 const router = express.Router();
