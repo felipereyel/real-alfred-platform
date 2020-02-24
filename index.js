@@ -5,9 +5,9 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 
-app.use(require('./routes/mainRoutes'));
-app.use(require('./routes/linkRoutes'));
-app.use(require('./routes/managementRoutes'));
+app.use(require('./main/mainRoutes'));
+app.use(require('./link/linkRoutes'));
+app.use(require('./admin/managementRoutes'));
 app.use('/dev', require('./dev/mainRoutes'));
 
 app.listen(PORT, () => {

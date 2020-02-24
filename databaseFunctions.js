@@ -1,5 +1,4 @@
 const { dbURL, dbsecretKey } = require("./constants");
-
 const axios = require('axios');
 
 async function getJSONDataBase(url = dbURL, secretKey = dbsecretKey) {
@@ -12,7 +11,7 @@ async function getJSONDataBase(url = dbURL, secretKey = dbsecretKey) {
     }).then(res => {
         return res.data;
     });
-};
+}
 
 async function putJSONDataBase(jsonfile, url = dbURL, secretKey = dbsecretKey) {
     return axios({
@@ -27,7 +26,57 @@ async function putJSONDataBase(jsonfile, url = dbURL, secretKey = dbsecretKey) {
     }).then(res => {
         return res.data;
     });
-};
+}
+
+async function updateJSONDataBase(jsonFile, updateFile, url = dbURL, secretKey = dbsecretKey) {
+
+    let newJsonFile = jsonFile.map( entry => {
+        let matchingEntries = updateFile.filter(
+            newEntry => entry.codename === newEntry.codename
+        );
+
+        if (matchingEntries.length !== 0){
+            return matchingEntries[0]
+        }
+        return entry
+    });
+
+    return axios({
+        method: 'put',
+        url: url,
+        headers: {
+            'Content-type': 'application/json',
+            'versioning': false,
+            'secret-key': secretKey
+        },
+        data: newJsonFile
+    }).then(res => {
+        return res.data;
+    });
+}
+
+function addDataBaseEntry(pseudoSerieInfo) {
+
+    return getJSONDataBase().then(seriesInfo => {
+        return buildAndAppendSerieInfo(seriesInfo, pseudoSerieInfo);
+    }).then(async (newSeriesInfo) => {
+        await putJSONDataBase(newSeriesInfo);
+        return newSeriesInfo;
+    });
+}
+
+function removeDatabaseEntry(codename) {
+
+    return getJSONDataBase().then(seriesInfo => {
+        return seriesInfo.filter(serieInfo => (serieInfo.codename !== codename));
+    }).then(async (newSeriesInfo) => {
+        await putJSONDataBase(newSeriesInfo);
+        return newSeriesInfo;
+    });
+}
 
 exports.getJSONDataBase = getJSONDataBase;
 exports.putJSONDataBase = putJSONDataBase;
+exports.updateJSONDataBase = updateJSONDataBase;
+exports.addDataBaseEntry = addDataBaseEntry;
+exports.removeDatabaseEntry = removeDatabaseEntry;

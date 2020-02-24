@@ -1,11 +1,15 @@
 const { refreshSeriesInfo } = require("../processFunctions");
-const { getJSONDataBase } = require("../databaseFunctions");
+const { getJSONDataBase, updateJSONDataBase } = require("../databaseFunctions");
 
 const express = require("express");
 const router = express.Router();
 
-router.get('/all', async (req, res, next) => {
-    let seriesInfo = await refreshSeriesInfo();
+router.get('/full/:s?', async (req, res, next) => {
+    const codename = req.params.s;
+
+    let seriesInfo = await getJSONDataBase();
+    let refreshedSeriesInfo = await refreshSeriesInfo(seriesInfo, codename);
+
     res.write(`
         <!DOCTYPE html>
             <html>
@@ -19,152 +23,143 @@ router.get('/all', async (req, res, next) => {
                         Episodios disponiveis
                     </h1>
     `);
-    seriesInfo.map(serieInfo => {
+
+    refreshedSeriesInfo.map(serieInfo => {
+        res.write(`
+                <h2>
+                    ${serieInfo.tittle}
+                </h2>
+        `);
         if(Array.isArray(serieInfo.latestsURLs) && serieInfo.latestsURLs.length){
-            res.write(`
-                    <h2>
-                        ${serieInfo.tittle}
-                    </h2>
-            `);
             serieInfo.latestsURLs.map(url => {
                 res.write(`
-                    <p><a href="${url}">
-                        ${url}
-                    </a></p>
+                <p><a href="${url}">
+                    ${url}
+                </a></p>
                 `);
             });
         }
-    });
-    res.write(`
-                </body>
-            </html>
-    `);
-    res.end();
-    console.log('GET/all');
-});
-
-router.get('/refresh', async (req, res, next) => {
-    let seriesInfo = await refreshSeriesInfo();
-    res.write(`
-        <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>
-                        A.L.F.R.E.D.
-                    </title>
-                </head>
-                <body>
-                    <h1>
-                        Episodios disponiveis
-                    </h1>
-    `);
-    seriesInfo.map(serieInfo => {
-        if(Array.isArray(serieInfo.newURLs) && serieInfo.newURLs.length){
+        else{
             res.write(`
-                    <h2>
-                        ${serieInfo.tittle}
-                    </h2>
+                <p>
+                    Nao ha episodios diponiveis
+                </p>
             `);
-            serieInfo.newURLs.map(url => {
-                res.write(`
-                    <p><a href="${url}">
-                        ${url}
-                    </a></p>
-                `);
-            });
         }
     });
-    res.write(`
-                </body>
-            </html>
-    `);
-    res.end();
-    console.log('GET/refresh');
-});
 
-router.get('/recent', async (req, res, next) => {
-    let seriesInfo = await getJSONDataBase();
-    res.write(`
-        <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>
-                        A.L.F.R.E.D.
-                    </title>
-                </head>
-                <body>
-                    <h1>
-                        Episodios disponiveis
-                    </h1>
-    `);
-    seriesInfo.map(serieInfo => {
-        if(Array.isArray(serieInfo.newURLs) && serieInfo.newURLs.length){
-            res.write(`
-                    <h2>
-                        ${serieInfo.tittle}
-                    </h2>
-            `);
-            serieInfo.newURLs.map(url => {
-                res.write(`
-                    <p><a href="${url}">
-                        ${url}
-                    </a></p>
-                `);
-            });
-        }
-    });
-    res.write(`
-                </body>
-            </html>
-    `);
-    res.end();
-    console.log('GET/recent');
-});
-
-router.get('/esp', async (req, res, next) => {
-    const seriesInfo = await refreshSeriesInfo();
-    const codename = req.query.s;
-    res.write(`
-        <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>
-                        A.L.F.R.E.D.
-                    </title>
-                </head>
-                <body>
-                    <h1>
-                        Episodios disponiveis
-                    </h1>
-    `);
-    seriesInfo.map(serieInfo => {
-        if(serieInfo.codename == codename){
-            res.write(`
-                    <h2>
-                        ${serieInfo.tittle}
-                    </h2>
-            `);
-            if(Array.isArray(serieInfo.latestsURLs) && serieInfo.latestsURLs.length){
-                serieInfo.latestsURLs.map(url => {
-                    res.write(`
-                    <p><a href="${url}">
-                        ${url}
-                    </a></p>
-                    `);
-                });
-            }
-            else{
-                res.write(`
-                    <p>
-                        Nao ha episodios diponiveis
-                    </p>
-                `);
-            }
-        }
-    });
     res.write('</body></html>');
     res.end();
-    console.log(`GET/esp for ${codename}`);
+
+    await updateJSONDataBase(seriesInfo, refreshedSeriesInfo);
+    console.log(`GET/full/${codename || ""}`);
+});
+
+router.get('/refresh/:s?', async (req, res, next) => {
+    const codename = req.params.s;
+
+    let seriesInfo = await getJSONDataBase();
+    let refreshedSeriesInfo = await refreshSeriesInfo(seriesInfo, codename);
+
+    res.write(`
+        <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>
+                        A.L.F.R.E.D.
+                    </title>
+                </head>
+                <body>
+                    <h1>
+                        Episodios disponiveis
+                    </h1>
+    `);
+
+    refreshedSeriesInfo.map(serieInfo => {
+        res.write(`
+                <h2>
+                    ${serieInfo.tittle}
+                </h2>
+        `);
+        if(Array.isArray(serieInfo.newURLs) && serieInfo.newURLs.length){
+            serieInfo.newURLs.map(url => {
+                res.write(`
+                <p><a href="${url}">
+                    ${url}
+                </a></p>
+                `);
+            });
+        }
+        else{
+            res.write(`
+                <p>
+                    Nao ha episodios diponiveis
+                </p>
+            `);
+        }
+    });
+
+    res.write(`
+                </body>
+            </html>
+    `);
+    res.end();
+
+    await updateJSONDataBase(seriesInfo, refreshedSeriesInfo);
+    console.log(`GET/refresh/${codename || ""}`);
+});
+
+router.get('/recent/:s?', async (req, res, next) => {
+    const codename = req.params.s;
+
+    let seriesInfo = await getJSONDataBase();
+    let filteredSeriesInfo = seriesInfo.filter(serieInfo =>  !codename || serieInfo.codename === codename);
+
+    res.write(`
+        <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>
+                        A.L.F.R.E.D.
+                    </title>
+                </head>
+                <body>
+                    <h1>
+                        Episodios disponiveis
+                    </h1>
+    `);
+
+    filteredSeriesInfo.map(serieInfo => {
+        res.write(`
+                <h2>
+                    ${serieInfo.tittle}
+                </h2>
+        `);
+        if(Array.isArray(serieInfo.newURLs) && serieInfo.newURLs.length){
+            serieInfo.newURLs.map(url => {
+                res.write(`
+                <p><a href="${url}">
+                    ${url}
+                </a></p>
+                `);
+            });
+        }
+        else{
+            res.write(`
+                <p>
+                    Nao ha episodios diponiveis
+                </p>
+            `);
+        }
+    });
+
+    res.write(`
+                </body>
+            </html>
+    `);
+    res.end();
+
+    console.log(`GET/recent/${codename || ""}`);
 });
 
 router.get('/', async (req, res, next) => {
@@ -185,7 +180,7 @@ router.get('/', async (req, res, next) => {
                         Robot for Easy Downloads
                     </p>
                     <h2>
-                        New episodes
+                        Fetch new episodes
                     </h2>
                     <p>
                         <a href="/refresh">
@@ -193,7 +188,7 @@ router.get('/', async (req, res, next) => {
                         </a>
                     </p>
                     <h2>
-                        Recent episodes
+                        Fetch recent episodes
                     </h2>
                     <p>
                         <a href="/recent">
@@ -201,10 +196,10 @@ router.get('/', async (req, res, next) => {
                         </a>
                     </p>
                     <h2>
-                        All episodes
+                        Fetch full list of episodes
                     </h2>
                     <p>
-                        <a href="/all">
+                        <a href="/full">
                             /all
                         </a>
                     </p>
@@ -215,12 +210,6 @@ router.get('/', async (req, res, next) => {
                         <a href="/link">
                             /link
                         </a>
-                    </p>
-                    <h2>
-                        Contact
-                    </h2>
-                    <p>
-                        contato@reyel.dev
                     </p>
                 </body>
             </html>

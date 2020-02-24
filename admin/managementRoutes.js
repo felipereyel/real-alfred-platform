@@ -1,5 +1,4 @@
-const { addSerieInfo, removeSerieInfo } = require("../processFunctions");
-const { getJSONDataBase } = require("../databaseFunctions");
+const { getJSONDataBase, addDataBaseEntry, removeDatabaseEntry } = require("../databaseFunctions");
 
 const express = require("express");
 const router = express.Router();
@@ -70,7 +69,7 @@ router.get('/create', async (req, res, next) => {
 });
 
 router.post('/createresult', async (req, res, next) => {
-    addSerieInfo(req.body);
+    await addDataBaseEntry(req.body);
     res.send("Sucesso!");
     console.log(`POST/createresult`);
 });
@@ -100,14 +99,13 @@ router.get('/remove', async (req, res, next) => {
 });
 
 router.post('/removeresult', async (req, res, next) => {
-    removeSerieInfo(req.body.codename);
+    await removeDatabaseEntry(req.body.codename);
     res.send("Sucesso!");
     console.log(`POST/createresult`);
 });
 
 router.get('/db', async (req, res, next) => {
-    const seriesInfo = await getJSONDataBase();
-    res.json(seriesInfo);
+    await res.json(await getJSONDataBase());
     console.log(`GET/db`);
 });
 
