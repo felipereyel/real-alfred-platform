@@ -22,12 +22,17 @@ router.get('/list', async (req, res, next) => {
     seriesInfo.map(serieInfo => {
         res.write(`
                     <p>
-                        ${serieInfo.tittle} - <a href="/esp?s=${serieInfo.codename}">${serieInfo.codename}</a>
+                        ${serieInfo.tittle} 
+                        - <a href="/full/${serieInfo.codename}">${serieInfo.codename}</a>
+                        - <a href="/delete/${serieInfo.codename}">x</a>
                     </p>
         `);
     });
 
     res.write(`
+                    <p>
+                       <a href="/create"> Create new entry </a>
+                    </p>
                 </body>
             </html>
     `);
@@ -70,38 +75,15 @@ router.get('/create', async (req, res, next) => {
 
 router.post('/createresult', async (req, res, next) => {
     await addDataBaseEntry(req.body);
-    res.send("Sucesso!");
     console.log(`POST/createresult`);
+    res.redirect("/list");
 });
 
-router.get('/remove', async (req, res, next) => {
-    res.write(`
-        <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>
-                        A.L.F.R.E.D.
-                    </title>
-                </head>
-                <body>
-                    <h1>
-                        Remover serie da watchlist
-                    </h1>
-                    <form method="POST" action="/removeresult">
-                        Codinome (Ex: got): <input type="text" name="codename" /><br>
-                        <input type="submit"/>
-                    </form>
-                </body>
-            </html>
-    `);
-    res.end();
-    console.log(`GET/create`);
-});
-
-router.post('/removeresult', async (req, res, next) => {
-    await removeDatabaseEntry(req.body.codename);
-    res.send("Sucesso!");
-    console.log(`POST/createresult`);
+router.get('/delete/:s', async (req, res, next) => {
+    const codename = req.params.s
+    await removeDatabaseEntry(codename);
+    console.log(`POST/detele/${codename}`);
+    res.redirect("/list");
 });
 
 router.get('/db', async (req, res, next) => {

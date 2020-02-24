@@ -88,25 +88,5 @@ async function refreshSeriesInfo(seriesInfo, codename = undefined) {
     }
 }
 
-function buildAndAppendSerieInfo(seriesInfo, pseudoSerieInfo) {
-    const { season, numEps, ...otherInfo } = pseudoSerieInfo;
-    const notDownloaded = [];
-
-    for (let ep = 1; ep <= Number(numEps); ep++){
-        if (ep >= 10) {
-            notDownloaded.push(season + "E" + ep.toString());
-        }
-        else {
-            notDownloaded.push(season + "E0" + ep.toString());
-        }
-    }
-
-    const serieInfo = { ...otherInfo, notDownloaded, latestsURLs: [], newURLs:[] };
-
-    seriesInfo.push(serieInfo);
-
-    return seriesInfo;
-}
-
 exports.createURL = createURL;
 exports.refreshSeriesInfo = refreshSeriesInfo;

@@ -1,4 +1,4 @@
-const { refreshSeriesInfo } = require("../processFunctions");
+const { refreshSeriesInfo } = require("../sourceAPIFunctions");
 const { getJSONDataBase, updateJSONDataBase } = require("../databaseFunctions");
 
 const express = require("express");

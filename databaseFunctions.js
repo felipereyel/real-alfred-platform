@@ -55,6 +55,26 @@ async function updateJSONDataBase(jsonFile, updateFile, url = dbURL, secretKey =
     });
 }
 
+function buildAndAppendSerieInfo(seriesInfo, pseudoSerieInfo) {
+    const { season, numEps, ...otherInfo } = pseudoSerieInfo;
+    const notDownloaded = [];
+
+    for (let ep = 1; ep <= Number(numEps); ep++){
+        if (ep >= 10) {
+            notDownloaded.push(season + "E" + ep.toString());
+        }
+        else {
+            notDownloaded.push(season + "E0" + ep.toString());
+        }
+    }
+
+    const serieInfo = { ...otherInfo, notDownloaded, latestsURLs: [], newURLs:[] };
+
+    seriesInfo.push(serieInfo);
+
+    return seriesInfo;
+}
+
 function addDataBaseEntry(pseudoSerieInfo) {
 
     return getJSONDataBase().then(seriesInfo => {
