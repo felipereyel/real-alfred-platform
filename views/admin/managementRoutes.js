@@ -1,4 +1,4 @@
-const { getJSONDataBase, addDataBaseEntry, removeDatabaseEntry } = require("../databaseFunctions");
+const { getJSONDataBase, addDataBaseEntry, removeDatabaseEntry } = require("../../databaseFunctions");
 
 const express = require("express");
 const router = express.Router();

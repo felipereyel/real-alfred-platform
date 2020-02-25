@@ -1,5 +1,5 @@
-const { refreshSeriesInfo } = require("../sourceAPIFunctions");
-const { getJSONDataBase, updateJSONDataBase } = require("../databaseFunctions");
+const { refreshSeriesInfo } = require("../../sourceAPIFunctions");
+const { getJSONDataBase, updateJSONDataBase } = require("../../databaseFunctions");
 
 const express = require("express");
 const router = express.Router();
@@ -115,50 +115,7 @@ router.get('/recent/:s?', async (req, res, next) => {
     let seriesInfo = await getJSONDataBase();
     let filteredSeriesInfo = seriesInfo.filter(serieInfo =>  !codename || serieInfo.codename === codename);
 
-    res.write(`
-        <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>
-                        A.L.F.R.E.D.
-                    </title>
-                </head>
-                <body>
-                    <h1>
-                        Episodios disponiveis
-                    </h1>
-    `);
-
-    filteredSeriesInfo.map(serieInfo => {
-        res.write(`
-                <h2>
-                    ${serieInfo.tittle}
-                </h2>
-        `);
-        if(Array.isArray(serieInfo.newURLs) && serieInfo.newURLs.length){
-            serieInfo.newURLs.map(url => {
-                res.write(`
-                <p><a href="${url}">
-                    ${url}
-                </a></p>
-                `);
-            });
-        }
-        else{
-            res.write(`
-                <p>
-                    Nao ha episodios diponiveis
-                </p>
-            `);
-        }
-    });
-
-    res.write(`
-                </body>
-            </html>
-    `);
-    res.end();
-
+    res.render("main/main.html", { seriesInfo: filteredSeriesInfo, urlListKey: "newURLs" });
     console.log(`GET/recent/${codename || ""}`);
 });
 
@@ -207,7 +164,7 @@ router.get('/', async (req, res, next) => {
                         Convert link
                     </h2>
                     <p>
-                        <a href="/link">
+                        <a href="/views/link">
                             /link
                         </a>
                     </p>

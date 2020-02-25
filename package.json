@@ -5,17 +5,19 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node dev/index.js",
+    "dev": "node views/dev/index.js",
     "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "ejs": "^3.0.1",
     "express": "^4.17.0",
     "eztv-api-pt": "^1.3.1",
     "nodemon": "^2.0.2",
-    "opensubtitles-api": "^5.0.1"
+    "opensubtitles-api": "^5.0.1",
+    "path": "^0.12.7"
   },
   "repository": {
     "type": "git",
