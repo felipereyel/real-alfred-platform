@@ -143,6 +143,38 @@ body {
     background-color: lightblue;
 }
 
+.home-option {
+    display: flex;
+}
+
+.home-option-desc {
+    width: 70%;
+    padding-left: 3%;
+    padding-top: 2px;
+    text-align: left;
+    border-radius: 20px;
+    background-color: lightgray;
+}
+
+.home-link {
+    flex-grow: 1;
+    text-align: center;
+    height: 100%;
+}
+
+.home-link a:link {
+    background-color: lightslategray;
+    color: white;
+    text-decoration: none;
+    display: block;
+    border-radius: 20px;
+    padding: 2%;
+}
+
+.home-link a:hover, a:active {
+    background-color: lightsteelblue;
+}
+
 /*#sign {*/
 /*    height: 600px;*/
 /*    width: 1000px;*/

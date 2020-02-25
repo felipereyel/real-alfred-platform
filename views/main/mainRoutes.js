@@ -45,58 +45,7 @@ router.get('/recent/:s?', async (req, res, next) => {
 });
 
 router.get('/', async (req, res, next) => {
-    res.write(`
-        <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>
-                        A.L.F.R.E.D.
-                    </title>
-                </head>
-                <body>
-                    <h1>
-                        A.L.F.R.E.D.
-                    </h1>
-                    <p>
-                        Artificialy Legal and Fun
-                        Robot for Easy Downloads
-                    </p>
-                    <h2>
-                        Fetch new episodes
-                    </h2>
-                    <p>
-                        <a href="/refresh">
-                            /refresh
-                        </a>
-                    </p>
-                    <h2>
-                        Fetch recent episodes
-                    </h2>
-                    <p>
-                        <a href="/recent">
-                            /recent
-                        </a>
-                    </p>
-                    <h2>
-                        Fetch full list of episodes
-                    </h2>
-                    <p>
-                        <a href="/full">
-                            /all
-                        </a>
-                    </p>
-                    <h2>
-                        Convert link
-                    </h2>
-                    <p>
-                        <a href="/views/link">
-                            /link
-                        </a>
-                    </p>
-                </body>
-            </html>
-    `);
-    res.end();
+    res.render("main/home.html");
     console.log('GET/');
 });
 
