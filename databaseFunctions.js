@@ -95,8 +95,29 @@ function removeDatabaseEntry(codename) {
     });
 }
 
+function removeDatabaseNestedEntry(codename, epId) {
+
+    return getJSONDataBase().then(seriesInfo => {
+        return seriesInfo.map(
+            serieInfo => {
+                if(serieInfo.codename !== codename) {
+                    return serieInfo;
+                }
+                serieInfo.notDownloaded.push({id: epId});
+                serieInfo.newURLs = serieInfo.newURLs.filter(ep => (ep.id !== epId));
+                serieInfo.latestsURLs = serieInfo.latestsURLs.filter(ep => (ep.id !== epId));
+                return serieInfo;
+            }
+        );
+    }).then(async (newSeriesInfo) => {
+        await putJSONDataBase(newSeriesInfo);
+        return newSeriesInfo;
+    });
+}
+
 exports.getJSONDataBase = getJSONDataBase;
 exports.putJSONDataBase = putJSONDataBase;
 exports.updateJSONDataBase = updateJSONDataBase;
 exports.addDataBaseEntry = addDataBaseEntry;
 exports.removeDatabaseEntry = removeDatabaseEntry;
+exports.removeDatabaseNestedEntry = removeDatabaseNestedEntry;

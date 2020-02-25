@@ -29,10 +29,22 @@
                         <h2><%= serieInfo.tittle %></h2>
                         <% if(Array.isArray(serieInfo[urlListKey]) && serieInfo[urlListKey].length) { %>
                             <% serieInfo[urlListKey].forEach((ep) => { %>
+
                                 <div class="episode">
-                                    <a href=<%= ep.url %>>
+                                    <div class="episode-name">
                                         <%= ep.url %>
-                                    </a>
+                                    </div>
+                                    <div class="episode-button">
+                                        <a href=<%= ep.url %>>
+                                            <i class="fa fa-download"></i>
+                                        </a>
+                                    </div>
+                                    <div class="episode-button">
+                                        <a href="/delete/<%= serieInfo.codename %>/<%= ep.id %>">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </div>
+
                                 </div><br>
                             <% }); %>
                         <% } else { %>

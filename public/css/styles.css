@@ -34,6 +34,7 @@ body {
     flex-grow: 1;
     padding-left: 2%;
 }
+
 .home-button {
     height: 65px;
     border-radius: 32.5px;
@@ -71,24 +72,65 @@ body {
 }
 
 .episode {
-    padding-left: 5%;
-    width: 90%;
+    padding-left: 5vw;
+    width: inherit;
+    display: table-row;
 }
 
-.episode a:link {
+.episode-name {
+    display: table-cell;
+    width: 70vw;
     background-color: lightslategray;
     color: white;
     word-break: break-word;
     text-decoration: none;
     text-align: left;
-    display: flex;
-    border-radius: 10px;
+    border-radius: 20px;
     padding: 3%;
 }
 
-.episode a:hover, a:active {
-    background-color: lightsteelblue;
+.episode-button{
+    padding-left: 0.2vw;
+    display: table-cell;
+    width: 4vw;
 }
+
+.fa-download {
+    padding-top: 60%;
+    padding-bottom: 60%;
+    height: 3vh;
+    width: 80%;
+    border-radius: 20px;
+    background-color: lightgreen;
+    color: white;
+    text-decoration: none;
+}
+
+.fa-trash {
+    padding-top: 60%;
+    padding-bottom: 60%;
+    width: 80%;
+    border-radius: 20px;
+    background-color: lightcoral;
+    color: white;
+    text-decoration: none;
+}
+
+/*.episode a:link {*/
+/*    width: 80%;*/
+/*    background-color: lightslategray;*/
+/*    color: white;*/
+/*    word-break: break-word;*/
+/*    text-decoration: none;*/
+/*    text-align: left;*/
+/*    display: flex;*/
+/*    border-radius: 10px;*/
+/*    padding: 3%;*/
+/*}*/
+
+/*.episode a:hover, a:active {*/
+/*    background-color: lightsteelblue;*/
+/*}*/
 
 .list-link {
     display: inline-block;

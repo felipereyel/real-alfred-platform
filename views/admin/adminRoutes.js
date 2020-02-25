@@ -1,4 +1,4 @@
-const { getJSONDataBase, addDataBaseEntry, removeDatabaseEntry } = require("../../databaseFunctions");
+const { getJSONDataBase, addDataBaseEntry, removeDatabaseEntry, removeDatabaseNestedEntry } = require("../../databaseFunctions");
 
 const express = require("express");
 const router = express.Router();
@@ -23,10 +23,18 @@ router.post('/createresult', async (req, res, next) => {
 });
 
 router.get('/delete/:s', async (req, res, next) => {
-    const codename = req.params.s
+    const codename = req.params.s;
     await removeDatabaseEntry(codename);
     console.log(`POST/detele/${codename}`);
     res.redirect("/list");
+});
+
+router.get('/delete/:s/:id', async (req, res, next) => {
+    const codename = req.params.s;
+    const epId = req.params.id;
+    await removeDatabaseNestedEntry(codename, epId);
+    console.log(`POST/detele/${codename}/${epId}`);
+    res.redirect(`/existing/${codename}`);
 });
 
 router.get('/db', async (req, res, next) => {
