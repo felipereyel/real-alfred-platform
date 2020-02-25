@@ -13,7 +13,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(require('./views/main/mainRoutes'));
 app.use(require('./views/link/linkRoutes'));
-app.use(require('./views/admin/managementRoutes'));
+app.use(require('./views/admin/adminRoutes'));
 app.use('/dev', require('./views/dev/mainRoutes'));
 
 app.listen(PORT, () => {

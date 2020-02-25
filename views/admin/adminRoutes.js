@@ -5,39 +5,8 @@ const router = express.Router();
 
 router.get('/list', async (req, res, next) => {
     const seriesInfo = await getJSONDataBase();
-    res.write(`
-        <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>
-                        A.L.F.R.E.D.
-                    </title>
-                </head>
-                <body>
-                    <h1>
-                        Series cadastradas
-                    </h1>
-    `);
 
-    seriesInfo.map(serieInfo => {
-        res.write(`
-                    <p>
-                        ${serieInfo.tittle} 
-                        - <a href="/full/${serieInfo.codename}">${serieInfo.codename}</a>
-                        - <a href="/delete/${serieInfo.codename}">x</a>
-                    </p>
-        `);
-    });
-
-    res.write(`
-                    <p>
-                       <a href="/create"> Create new entry </a>
-                    </p>
-                </body>
-            </html>
-    `);
-
-    res.end();
+    res.render("admin/admin.html", { seriesInfo: seriesInfo });
 
     console.log(`GET/list`);
 });

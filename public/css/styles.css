@@ -38,7 +38,7 @@ body {
     width: 90%;
 }
 
-a:link {
+.episode a:link {
     background-color: lightslategray;
     color: white;
     word-break: break-word;
@@ -49,9 +49,61 @@ a:link {
     padding: 3%;
 }
 
-a:hover, a:active {
+.episode a:hover, a:active {
     background-color: lightsteelblue;
+}
+
+.list-link {
+    display: inline-block;
+    width: 20%;
+    text-align: center;
+}
+
+.list-link a:link {
+    background-color: lightslategray;
+    color: white;
+    text-decoration: none;
+    display: block;
     border-radius: 8px;
+    padding: 2%;
+}
+
+.list-link a:hover, a:active {
+    background-color: lightsteelblue;
+}
+
+.delete-link {
+    display: inline-block;
+    width: 20%;
+    text-align: center;
+}
+
+.delete-link a:link {
+    background-color: lightcoral;
+    color: white;
+    text-decoration: none;
+    display: block;
+    border-radius: 8px;
+    padding: 2%;
+}
+
+.delete-link a:hover, a:active {
+    background-color: lightpink;
+}
+
+.new-tv-show a:link {
+    height: 33px;
+    padding-top: 10px;
+    background-color: lightgreen;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    display: block;
+    border-radius: 20px;
+}
+
+.new-tv-show a:hover, a:active {
+    background-color: palegreen;
 }
 
 /*.input {*/

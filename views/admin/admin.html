@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet"
+              type="text/css"
+              href="/css/styles.css">
+        <link href="https://fonts.googleapis.com/css?family=Muli|Source+Sans+Pro|Work+Sans&display=swap"
+              rel="stylesheet">
+        <title>A.L.F.R.E.D.</title>
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <div class="header">
+                <h1>Enrolled TV Shows</h1>
+            </div>
+            <br>
+            <div class="container">
+                <% seriesInfo.forEach((serieInfo) => { %>
+                    <div class="tv-show">
+                        <h2><%= serieInfo.tittle %></h2>
+                        <div class="crud">
+                            <div class="list-link">
+                                <a href="/full/<%= serieInfo.codename %>">
+                                    full
+                                </a>
+                            </div>
+                            <div class="list-link">
+                                <a href="/refresh/<%= serieInfo.codename %>">
+                                    refresh
+                                </a>
+                            </div>
+                            <div class="list-link">
+                                <a href="/recent/<%= serieInfo.codename %>">
+                                    recent
+                                </a>
+                            </div>
+                            <div class="delete-link">
+                                <a href="/detete/<%= serieInfo.codename %>">
+                                    delete
+                                </a>
+                            </div>
+                        </div><br>
+                    </div><br>
+                <% }); %>
+                <div class="new-tv-show">
+                    <a href="/create">
+                        Add Show
+                    </a>
+                </div><br>
+            </div>
+        </div>
+    </body>
+</html>
