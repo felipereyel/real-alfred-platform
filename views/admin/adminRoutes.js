@@ -13,7 +13,6 @@ router.get('/list', async (req, res, next) => {
 
 router.get('/create', async (req, res, next) => {
     res.render("admin/create.html");
-
     console.log(`GET/create`);
 });
 

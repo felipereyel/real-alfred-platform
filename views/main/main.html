@@ -20,10 +20,10 @@
                     <div class="tv-show">
                         <h2><%= serieInfo.tittle %></h2>
                         <% if(Array.isArray(serieInfo[urlListKey]) && serieInfo[urlListKey].length) { %>
-                            <% serieInfo[urlListKey].forEach((url) => { %>
+                            <% serieInfo[urlListKey].forEach((ep) => { %>
                                 <div class="episode">
-                                    <a href=<%= url %>>
-                                        <%= url %>
+                                    <a href=<%= ep.url %>>
+                                        <%= ep.url %>
                                     </a>
                                 </div><br>
                             <% }); %>

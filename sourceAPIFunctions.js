@@ -31,6 +31,10 @@ function createURL(fileName) {
     return urlPrefix + fileName.replace(tagToRemove, '').replace('.', '-').toLowerCase();
 }
 
+function createEpisode(url, id) {
+    return {id, url}
+}
+
 function getEpNamesFromURL(name, URL) {
     return axios.get(URL).then(response => {
         let ss = response.data.split('\n');
@@ -47,8 +51,8 @@ function getEpNamesFromURL(name, URL) {
 function filterNamesToDownload(names, notDowloaded) {
     let namesToDownload = {};
     notDowloaded.map((epNotDownloaded) => {
-        namesToDownload[epNotDownloaded] = names.filter((name) => {
-            if (name.search(epNotDownloaded) !== -1) {
+        namesToDownload[epNotDownloaded.id] = names.filter((name) => {
+            if (name.search(epNotDownloaded.id) !== -1) {
                 return true;
             }
         });
@@ -58,19 +62,41 @@ function filterNamesToDownload(names, notDowloaded) {
 
 function promiseRefreshSeriesInfo(seriesInfo) {
     return seriesInfo.map(serieInfo => {
-        let { codename, tittle, name, URL, notDownloaded, quality, source, latestsURLs, newURLs } = serieInfo;
+        let { codename, tittle, name, URL, quality, source, notDownloaded, latestsURLs, newURLs } = serieInfo;
         newURLs = [];
+
         return getEpNamesFromURL(name, URL).then(availableEpisodeNames => {
             let availableEpisodeNamesToDownload = filterNamesToDownload(availableEpisodeNames, notDownloaded);
+
             for (let ep in availableEpisodeNamesToDownload) {
+                //se nao tem link do ep continua
                 if (!(Array.isArray(availableEpisodeNamesToDownload[ep]) && availableEpisodeNamesToDownload[ep].length)) {
-                    continue; //se nao tem link do episodio
+                    continue;
                 }
-                notDownloaded = notDownloaded.filter((epNotDownloaded) => { return epNotDownloaded !== ep; });
-                latestsURLs.push(createURL(filterQualitySource(availableEpisodeNamesToDownload[ep], quality, source)));
-                newURLs.push(createURL(filterQualitySource(availableEpisodeNamesToDownload[ep], quality, source)));
+
+                // remove o ep.id do notDownloaded
+                notDownloaded = notDownloaded.filter(
+                    (epNotDownloaded) => { return epNotDownloaded.id !== ep; }
+                );
+
+                // cria o url
+                let newURL = createURL(
+                    filterQualitySource(
+                        availableEpisodeNamesToDownload[ep],
+                        quality,
+                        source
+                    )
+                );
+
+                // cria o ep
+                let newEpisode = createEpisode(newURL, ep);
+
+                // adiciona aos newURLs e latestsURLs
+                newURLs.push(newEpisode);
+                latestsURLs.push(newEpisode);
             }
-            return { codename, tittle, name, URL, notDownloaded, quality, source, latestsURLs, newURLs };
+
+            return { codename, tittle, name, URL, quality, source, notDownloaded, latestsURLs, newURLs };
         });
     });
 }
@@ -90,3 +116,4 @@ async function refreshSeriesInfo(seriesInfo, codename = undefined) {
 
 exports.createURL = createURL;
 exports.refreshSeriesInfo = refreshSeriesInfo;
+exports.createEpisode = createEpisode;

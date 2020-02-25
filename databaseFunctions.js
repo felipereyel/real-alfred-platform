@@ -61,10 +61,10 @@ function buildAndAppendSerieInfo(seriesInfo, pseudoSerieInfo) {
 
     for (let ep = 1; ep <= Number(numEps); ep++){
         if (ep >= 10) {
-            notDownloaded.push(season + "E" + ep.toString());
+            notDownloaded.push({id: season + "E" + ep.toString()});
         }
         else {
-            notDownloaded.push(season + "E0" + ep.toString());
+            notDownloaded.push({id: season + "E0" + ep.toString()});
         }
     }
 
