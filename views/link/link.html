@@ -12,14 +12,15 @@
 <body>
 <div class="wrapper">
     <div class="header">
-        <h1>File Link</h1>
+        <h1>Create Link</h1>
     </div>
     <br>
     <div class="container">
-        <div class="link-result">
-            <a href=<%= url %>>
-                <%= url %>
-            </a>
+        <div class="create-link-form">
+            <form method="POST" action="/linkresult">
+                <input placeholder=" filename (Banana.HDTV.2CH.x265.HEVC-PSA)" type="text" name="filename" class="input"/><br><br>
+                <button id="submit-button" type="submit" value="Create" >Create</button>
+            </form>
         </div>
     </div>
 </div>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet"
+          type="text/css"
+          href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Muli|Source+Sans+Pro|Work+Sans&display=swap"
+          rel="stylesheet">
+    <title>A.L.F.R.E.D.</title>
+</head>
+
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>Add New TV Show</h1>
+    </div>
+    <br>
+    <div class="container">
+        <div class="add-show-form">
+            <form method="POST" action="/createresult">
+                <input placeholder="codinome (got)" type="text" name="codename" class="input" /><br><br>
+                <input placeholder="titulo (Game Of Thrones)" type="text" name="tittle" class="input" /><br><br>
+                <input placeholder="gatilho (Game.of.Thrones.S)" type="text" name="name" class="input" /><br><br>
+                <input placeholder="URL (https://psarips.eu/tv-show/game-thrones-season-8/)" type="text" name="URL" class="input" /><br><br>
+                <input placeholder="qualidade (720p)" type="text" name="quality" class="input" /><br><br>
+                <input placeholder="fonte (WEB)" type="text" name="source" class="input" /><br><br>
+                <input placeholder="temporada (S08)" type="text" name="season" class="input" /><br><br>
+                <input placeholder="numero de episodios (6)" type="text" name="numEps" class="input" /><br><br>
+                <button id="submit-button" type="submit" value="Create" >Create</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

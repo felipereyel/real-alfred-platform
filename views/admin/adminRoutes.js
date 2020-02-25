@@ -6,39 +6,14 @@ const router = express.Router();
 router.get('/list', async (req, res, next) => {
     const seriesInfo = await getJSONDataBase();
 
-    res.render("admin/admin.html", { seriesInfo: seriesInfo });
+    res.render("admin/list.html", { seriesInfo: seriesInfo });
 
     console.log(`GET/list`);
 });
 
 router.get('/create', async (req, res, next) => {
-    res.write(`
-        <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>
-                        A.L.F.R.E.D.
-                    </title>
-                </head>
-                <body>
-                    <h1>
-                        Adicionar serie na watchlist
-                    </h1>
-                    <form method="POST" action="/createresult">
-                        Codinome (Ex: got): <input type="text" name="codename" /><br>
-                        Titulo (Ex: Game Of Thrones): <input type="text" name="tittle" /><br>
-                        Gatilho (Ex: Game.of.Thrones.S): <input type="text" name="name" /><br>
-                        URL (Ex: https://psarips.eu/tv-show/game-thrones-season-8/): <input type="text" name="URL" /><br>
-                        Qualidade (Ex: 720p): <input type="text" name="quality" /><br>
-                        Fonte (Ex: WEB): <input type="text" name="source" /><br>
-                        Temporada (Ex: S08): <input type="text" name="season" /><br>
-                        Numero de episodios (Ex: 6): <input type="text" name="numEps" /><br>
-                        <input type="submit"/>
-                    </form>
-                </body>
-            </html>
-    `);
-    res.end();
+    res.render("admin/create.html");
+
     console.log(`GET/create`);
 });
 
