@@ -8,6 +8,7 @@
               rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
               rel="stylesheet">
+        <link rel='shortcut icon' type='image/png' href='https://www.cmcrossroads.com/sites/default/files/article/2016/Jenkins.sh-600x600.png' />
         <title>A.L.F.R.E.D.</title>
     </head>
 
@@ -33,8 +34,13 @@
                                 </a>
                             </div>
                             <div class="list-link">
-                                <a href="/refresh/<%= serieInfo.codename %>">
-                                    refresh
+                                <a href="/new/<%= serieInfo.codename %>">
+                                    new
+                                </a>
+                            </div>
+                            <div class="list-link">
+                                <a href="/existing/<%= serieInfo.codename %>">
+                                    existing
                                 </a>
                             </div>
                             <div class="list-link">
@@ -54,7 +60,7 @@
                     <a href="/create">
                         Add Show
                     </a>
-                </div><br>
+                </div>
             </div>
         </div>
     </body>

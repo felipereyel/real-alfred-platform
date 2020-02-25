@@ -18,7 +18,7 @@ router.get('/full/:s?', async (req, res, next) => {
     console.log(`GET/full/${codename || ""}`);
 });
 
-router.get('/refresh/:s?', async (req, res, next) => {
+router.get('/new/:s?', async (req, res, next) => {
     const codename = req.params.s;
 
     let seriesInfo = await getJSONDataBase();
@@ -30,6 +30,18 @@ router.get('/refresh/:s?', async (req, res, next) => {
     await updateJSONDataBase(seriesInfo, refreshedSeriesInfo);
 
     console.log(`GET/refresh/${codename || ""}`);
+});
+
+router.get('/existing/:s?', async (req, res, next) => {
+    const codename = req.params.s;
+
+    let seriesInfo = await getJSONDataBase();
+
+    let filteredSeriesInfo = seriesInfo.filter(serieInfo =>  !codename || serieInfo.codename === codename);
+
+    res.render("main/main.html", { seriesInfo: filteredSeriesInfo, urlListKey: "latestsURLs" });
+
+    console.log(`GET/recent/${codename || ""}`);
 });
 
 router.get('/recent/:s?', async (req, res, next) => {
