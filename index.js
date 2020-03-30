@@ -1,5 +1,9 @@
-const express = require("express");
+const express = require('express');
+const cron = require('node-cron');
 const path = require('path');
+
+const { autoRefreshSeriesInfo } = require("./sourceAPIFunctions");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,3 +23,8 @@ app.use('/dev', require('./views/dev/mainRoutes'));
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
+
+cron.schedule(
+    "45 11 * * *",
+    async () => await autoRefreshSeriesInfo()
+);

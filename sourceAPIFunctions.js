@@ -1,3 +1,5 @@
+const { getJSONDataBase } = require("./databaseFunctions");
+
 const { urlPrefix, tagToRemove } = require("./constants");
 
 const axios = require('axios');
@@ -114,6 +116,13 @@ async function refreshSeriesInfo(seriesInfo, codename = undefined) {
     }
 }
 
+async function autoRefreshSeriesInfo() {
+    let seriesInfo = await getJSONDataBase();
+    await refreshSeriesInfo(seriesInfo, undefined);
+    console.log('cron job - refreshed episodes list');
+}
+
 exports.createURL = createURL;
 exports.refreshSeriesInfo = refreshSeriesInfo;
 exports.createEpisode = createEpisode;
+exports.autoRefreshSeriesInfo = autoRefreshSeriesInfo;
