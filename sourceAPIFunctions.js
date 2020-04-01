@@ -1,4 +1,4 @@
-const { getJSONDataBase } = require("./databaseFunctions");
+const { getJSONDataBase, updateJSONDataBase } = require("./databaseFunctions");
 
 const { urlPrefix, tagToRemove } = require("./constants");
 
@@ -118,7 +118,8 @@ async function refreshSeriesInfo(seriesInfo, codename = undefined) {
 
 async function autoRefreshSeriesInfo() {
     let seriesInfo = await getJSONDataBase();
-    await refreshSeriesInfo(seriesInfo, undefined);
+    let refreshedSeriesInfo = await refreshSeriesInfo(seriesInfo, undefined);
+    await updateJSONDataBase(seriesInfo, refreshedSeriesInfo);
     console.log('cron job - refreshed episodes list');
 }
 
