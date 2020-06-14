@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node views/dev/index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "deploy": "PORT=80 node index.js"
   },
   "author": "",
   "license": "ISC",
