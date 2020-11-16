@@ -1,30 +1,77 @@
+const axios = require('axios');
 const express = require('express');
-const cron = require('node-cron');
-const path = require('path');
-
-const { autoRefreshSeriesInfo } = require("./sourceAPIFunctions");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 
-app.set('views', path.join(__dirname, 'views'));
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
-app.use(express.static(__dirname + '/public'));
+const { PORT, SEASON_VALIDATOR, EPISODE_VALIDATOR } = require("./constants");
+const { group } = require("./processing");
+const { getEpisodeFilenames } = require("./PSA");
 
-app.use(require('./views/main/mainRoutes'));
-app.use(require('./views/link/linkRoutes'));
-app.use(require('./views/admin/adminRoutes'));
-app.use('/dev', require('./views/dev/mainRoutes'));
+app.get('/show/:show', async (req, res) => {
+    const showKey = req.params.show;
+
+    if (!showKey) {
+        res.status(400).send({ error: "Missing parameters" }); 
+        return;
+    }
+
+    const source = req.query.source || "WEB";
+    const quality = req.query.quality || "1080p";
+
+    const episodes = await getEpisodeFilenames(showKey);
+    const groupedEps = group(episodes, quality, source);
+
+    res.status(200).send({ data: groupedEps });
+});
+
+app.get('/show/:show/:season', async (req, res) => {
+    const showKey = req.params.show;
+    const seasonNumber = req.params.season;
+
+    if (!showKey || !seasonNumber) {
+        res.status(400).send({ error: "Missing parameters" }); 
+        return;
+    }
+
+    if (!seasonNumber.match(SEASON_VALIDATOR)) {
+        res.status(400).send({ error: "Bad parameters" }); 
+        return;
+    }
+
+    const source = req.query.source || "WEB";
+    const quality = req.query.quality || "1080p";
+
+    const episodes = await getEpisodeFilenames(showKey);
+    const groupedEps = group(episodes, quality, source);
+
+    res.status(200).send({ data: groupedEps[seasonNumber] });
+});
+
+app.get('/show/:show/:season/:episode', async (req, res) => {
+    const showKey = req.params.show;
+    const seasonNumber = req.params.season;
+    const episodeNumber = req.params.episode;
+
+    if (!showKey || !seasonNumber || !episodeNumber) {
+        res.status(400).send({ error: "Missing parameters" }); 
+        return;
+    }
+
+    if (!seasonNumber.match(SEASON_VALIDATOR) || !episodeNumber.match(EPISODE_VALIDATOR)) {
+        res.status(400).send({ error: "Bad parameters" }); 
+        return;
+    }
+
+    const source = req.query.source || "WEB";
+    const quality = req.query.quality || "1080p";
+
+    const episodes = await getEpisodeFilenames(showKey);
+    const groupedEps = group(episodes, quality, source);
+
+    res.status(200).send({ data: groupedEps[seasonNumber]?.[episodeNumber] });
+});
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
-
-cron.schedule(
-    "45 11 * * *",
-    async () => await autoRefreshSeriesInfo()
-);
