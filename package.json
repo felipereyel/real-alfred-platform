@@ -4,20 +4,18 @@
   "description": "Esse projeto cria uma ferramenta que auxilia na busca de suas series favoritas",
   "main": "index.js",
   "scripts": {
-    "dev": "node eztv_fork/index.js",
-    "start": "node index.js",
-    "deploy": "PORT=80 node index.js"
+    "fork": "node eztv_fork/index.js",
+    "local": "node local.js",
+    "deploy": "npm i && gcloud functions deploy alfred --runtime nodejs12 --trigger-http --entry-point app"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "firebase-functions": "^3.11.0",
     "lodash": "^4.17.20"
-  },
-  "devDependencies": {
-    "eztv-api-pt": "^1.3.1",
-    "opensubtitles-api": "^5.0.1"
   },
   "repository": {
     "type": "git",

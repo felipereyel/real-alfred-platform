@@ -1,14 +1,15 @@
-const axios = require('axios');
 const express = require('express');
+const cors = require('cors');
 
 const app = express();
 app.use(express.urlencoded({extended: true}));
+app.use(cors({ origin: true }));
 
-const { PORT, SEASON_VALIDATOR, EPISODE_VALIDATOR } = require("./constants");
+const { SEASON_VALIDATOR, EPISODE_VALIDATOR } = require("./constants");
 const { group } = require("./processing");
 const { getEpisodeFilenames } = require("./PSA");
 
-app.get('/show/:show', async (req, res) => {
+app.get('/:show', async (req, res) => {
     const showKey = req.params.show;
 
     if (!showKey) {
@@ -25,7 +26,7 @@ app.get('/show/:show', async (req, res) => {
     res.status(200).send({ data: groupedEps });
 });
 
-app.get('/show/:show/:season', async (req, res) => {
+app.get('/:show/:season', async (req, res) => {
     const showKey = req.params.show;
     const seasonNumber = req.params.season;
 
@@ -48,7 +49,7 @@ app.get('/show/:show/:season', async (req, res) => {
     res.status(200).send({ data: groupedEps[seasonNumber] });
 });
 
-app.get('/show/:show/:season/:episode', async (req, res) => {
+app.get('/:show/:season/:episode', async (req, res) => {
     const showKey = req.params.show;
     const seasonNumber = req.params.season;
     const episodeNumber = req.params.episode;
@@ -69,9 +70,10 @@ app.get('/show/:show/:season/:episode', async (req, res) => {
     const episodes = await getEpisodeFilenames(showKey);
     const groupedEps = group(episodes, quality, source);
 
-    res.status(200).send({ data: groupedEps[seasonNumber]?.[episodeNumber] });
+    const seasonEps = groupedEps[seasonNumber];
+    const data = seasonEps ? seasonEps[episodeNumber] : undefined;
+
+    res.status(200).send({ data });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-});
+exports.app = app;
