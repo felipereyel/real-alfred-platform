@@ -3,7 +3,8 @@ const cors = require('cors');
 
 const app = express();
 app.use(express.urlencoded({extended: true}));
-app.use(cors({ origin: true }));
+app.use(cors());
+app.options('*', cors());
 
 const { SEASON_VALIDATOR, EPISODE_VALIDATOR } = require("./constants");
 const { group } = require("./processing");
